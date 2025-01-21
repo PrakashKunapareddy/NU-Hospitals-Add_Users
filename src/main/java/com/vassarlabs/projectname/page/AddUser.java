@@ -4,6 +4,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 import java.io.FileInputStream;
@@ -139,19 +141,22 @@ public class AddUser {
     }
 
     public void writeDataToUsers(String filePath, String sheetName) throws Throwable {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         List<String[]> formData = readExcelData(filePath, sheetName);
         String firstName = "";
         String lastName = "";
         for (String[] row : formData) {
             clickOnAddUserButton();
             String displayName = row[1].trim();
+            String[] nameParts = displayName.split(" ");
             if (displayName.split(" ").length > 1) {
                 firstName = displayName.split(" ")[0];
-                lastName = displayName.split(" ")[1];
+                lastName = String.join("_", Arrays.copyOfRange(nameParts, 1, nameParts.length));
             } else {
                 firstName = displayName;
                 lastName = "";
             }
+            System.out.println(row);
             driver.findElement(firstNameField).sendKeys(firstName);
             driver.findElement(lastNameField).sendKeys(lastName);
             String usernameDisplayName = firstName.toLowerCase() + "_" + lastName.toLowerCase();
@@ -159,27 +164,26 @@ public class AddUser {
             driver.findElement(emailField).sendKeys(row[2]);
             driver.findElement(phoneNumberField).sendKeys(row[3].split("-")[1]);
             driver.findElement(branchDropDown).click();
-            Thread.sleep(1000);
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//mat-option/span[text()=' "+row[4].trim()+" ']")));
             driver.findElement(By.xpath("//mat-option/span[text()=' "+row[4].trim()+" ']")).click();
-            Thread.sleep(2000);
             driver.findElement(DepartmentDropDown).click();
-            Thread.sleep(1000);
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//mat-option/span[text()=' Nursing ']")));
             driver.findElement(By.xpath("//mat-option/span[text()=' Nursing ']")).click();
             driver.findElement(SubDepartmentDropDown).click();
-            Thread.sleep(1000);
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//mat-option/span[text()=' "+row[5].trim()+" ']")));
             driver.findElement(By.xpath("//mat-option/span[text()=' "+row[5].trim()+" ']")).click();
-//            driver.findElement(ReportingToDropDown).click();
-//            driver.findElement(By.xpath("//mat-option/span[text()='"+row[8].trim()+"']")).click();
-            Thread.sleep(1000);
+            driver.findElement(ReportingToDropDown).click();
+            driver.findElement(By.xpath("//mat-option/span[text()=' "+row[7].trim()+" ']")).click();
+            wait.until(ExpectedConditions.elementToBeClickable(submitButtonAddUser));
             driver.findElement(submitButtonAddUser).click();
             Thread.sleep(4000);
             driver.findElement(roleDropDownField).click();
-            driver.findElement(By.xpath("//div[@class='ng-option-disabled ng-optgroup ng-star-inserted'][@role='group']/following-sibling::div[contains(text(),'" + row[6].trim() + "')]")).click();//use row[6] as role
-            Thread.sleep(1000);
+            Thread.sleep(3000);
+            driver.findElement(By.xpath("//div[@class='ng-option-disabled ng-optgroup ng-star-inserted'][@role='group']/following-sibling::div[contains(text(),'" + row[6].trim() + "')]")).click();
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()='Add Role']/..")));
             driver.findElement(By.xpath("//span[text()='Add Role']/..")).click();
             driver.findElement(By.xpath("//span[text()='Continue']/..")).click();
-            Thread.sleep(2000);
-
+            Thread.sleep(1000);
         }
     }
 

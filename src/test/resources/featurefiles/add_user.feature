@@ -7,7 +7,7 @@ Feature: ADD USERS FOR NU HOSPITALS
     Then ADD USERS <file_path> <sheet_name>
 
     Examples:
-      | Username      | Password           | file_path                                                 | sheet_name           |
-      | "nuhospitals" | "@Nuhospitals1234" | "/home/saiprakesh/Downloads/Nurse List All Unit (2).xlsx" | "Nursing Department" |
+      | Username      | Password           | file_path                                                                                                                               | sheet_name           |
+      | "nuhospitals" | "@Nuhospitals1234" | "/home/saiprakesh/Documents/NU-web-socket_response-comparison/Add_Users_Automation/NU-Hospitals-Add_Users/Nurse List All Unit (2).xlsx" | "Nursing Department" |
 
 
